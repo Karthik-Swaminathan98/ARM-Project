@@ -10,6 +10,7 @@
 #define SINE_FREQ 50           // Frequency of the sine wave
 #define SAMPLING_FREQ 256      // Sampling frequency
 #define FFT_SIZES_COUNT 6      // Total number of FFT sizes to test
+#define Q15_SCALE 32768
 
 // Array of FFT sizes to test
 const int FFT_SIZES[FFT_SIZES_COUNT] = {32, 64, 128, 256, 512, 1024};
@@ -55,7 +56,7 @@ uint32_t measure_stack_usage() {
 void generate_sine_wave_q15(q15_t* input, int N, float signal_freq, float sampling_freq) {
     for (int i = 0; i < N; i++) {
         float value = sinf(2 * M_PI * signal_freq * i / sampling_freq);
-        input[2 * i] = (q15_t)(value * 32767.0f);  // Real part (scaled to Q15 format)
+        input[2 * i] = (q15_t)(value * Q15_SCALE);  // Real part (scaled to Q15 format)
         input[2 * i + 1] = 0;                     // Imaginary part (set to 0)
     }
 }

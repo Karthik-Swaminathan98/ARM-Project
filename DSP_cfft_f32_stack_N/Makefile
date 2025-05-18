@@ -126,7 +126,7 @@ CXXFLAGS=
 ASFLAGS=
 
 # Additional / custom linker flags.
-LDFLAGS= -LCMSIS -lCMSISDSP_Ofast
+LDFLAGS= -LCMSIS -lCMSISDSP_Os
 
 # Additional / custom libraries to link in to the application.
 LDLIBS=
