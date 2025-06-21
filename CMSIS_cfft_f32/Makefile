@@ -85,7 +85,7 @@ VERBOSE=1
 # ... then code in directories named COMPONENT_foo and COMPONENT_bar will be
 # added to the build
 #
-COMPONENTS=
+COMPONENTS= CMSIS_DSP
 
 # Like COMPONENTS, but disable optional code that was enabled by default.
 DISABLE_COMPONENTS=
@@ -98,8 +98,7 @@ SOURCES=
 
 # Like SOURCES, but for include directories. Value should be paths to
 # directories (without a leading -I).
-INCLUDES =C:/Users/SwaminathanK/Desktop/Thesis/DSP_Library_ARM/CMSIS-DSP/CMSIS-DSP/Include \
-          C:/Users/SwaminathanK/Desktop/Thesis/DSP_Library_ARM/CMSIS-DSP/CMSIS-DSP/Include/dsp
+INCLUDES =
 
 # Add additional defines to the build process (without a leading -D).
 DEFINES=
@@ -126,7 +125,7 @@ CXXFLAGS=
 ASFLAGS=
 
 # Additional / custom linker flags.
-LDFLAGS= -L./CMSIS -lCMSISDSP_Ofast
+LDFLAGS= 
 
 # Additional / custom libraries to link in to the application.
 LDLIBS=
@@ -137,9 +136,16 @@ LINKER_SCRIPT=
 # Custom pre-build commands to run.
 PREBUILD=
 
-# Custom post-build commands to run.
-POSTBUILD=
+TARGET_FUNC=arm_cfft_f32 arm_cmplx_mag_f32
 
+POSTBUILD=\
+$(MTB_TOOLCHAIN_GCC_ARM__BASE_DIR)/bin/arm-none-eabi-objdump -S \
+$(MTB_TOOLS__OUTPUT_CONFIG_DIR)/$(APPNAME).$(MTB_TOOLCHAIN_GCC_ARM__SUFFIX_TARGET) \
+> $(MTB_TOOLS__OUTPUT_CONFIG_DIR)/$(APPNAME).objdump && \
+python tools/function_size.py \
+$(MTB_TOOLS__OUTPUT_CONFIG_DIR)/$(APPNAME).map \
+$(MTB_TOOLS__OUTPUT_CONFIG_DIR)/$(APPNAME).objdump \
+$(TARGET_FUNC) > tools/code_size_report.txt
 
 ################################################################################
 # Paths

@@ -1,11 +1,14 @@
 #include "cyhal.h"
 #include "cybsp.h"
+#include "cyhal_clock.h"
 #include "cy_retarget_io.h"
 #include "arm_math.h"
 #include "core_cm4.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include "cycfg_clocks.h"
+
 
 #define SINE_FREQ 50           // Frequency of the sine wave
 #define SAMPLING_FREQ 256      // Sampling frequency
@@ -80,9 +83,22 @@ int main(void) {
     if (result != CY_RSLT_SUCCESS) {
         CY_ASSERT(0);
     }
-
     printf("****************** \n\r");
     printf("Starting FFT Stack Usage Benchmark Program (Q15)\n\r");
+
+    uint32_t cpu_freq = Cy_SysClk_ClkHfGetFrequency(0);
+
+    printf("Core Clock Frequency: %lu Hz\n", cpu_freq);
+
+//    uint32_t freq = 0;
+//     cyhal_clock_t clock;
+//     cy_rslt_t rslt = cyhal_clock_get(&clock, &CYHAL_CLOCK_HF);
+//     bool enabled = cyhal_clock_is_enabled(&clock);
+//     freq = cyhal_clock_get_frequency(&clock);
+//         /* Use frequency information for something */
+//     printf("%ld Frequency:",freq);
+
+
 
     enable_cycle_counter();
 

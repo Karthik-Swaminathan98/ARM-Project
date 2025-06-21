@@ -5,6 +5,7 @@
 //#include "funcs_def.h"
 
 void softmax_arm_softmax_s8();
+void softmax_invalid_diff_min_arm_softmax_s8();
 void softmax_s16_arm_softmax_s16();
 void softmax_s8_s16_arm_softmax_s8_s16();
 
@@ -30,9 +31,15 @@ int main(void)
         CY_ASSERT(0);
     }
 	printf("\n\r");
-    printf("Starting CMSIS-Softmax Functions benchmark\n\r");
+    printf("-----Starting CMSIS-Softmax Functions benchmark-----\n\r");
+    printf("*****ARM Softmax Functions S8*****\n\r");
     softmax_arm_softmax_s8();
+    softmax_invalid_diff_min_arm_softmax_s8();
+    printf("\n\r");
+    printf("*****ARM Softmax Functions S16*****\n\r");
     softmax_s16_arm_softmax_s16();
+    printf("\n\r");
+    printf("*****ARM Softmax Functions S8_S16*****\n\r");
     softmax_s8_s16_arm_softmax_s8_s16();
     printf("All tests are passed.\n\r");
 	printf("Finish Softmax Functions benchmark\n\r");

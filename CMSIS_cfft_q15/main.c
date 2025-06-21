@@ -128,7 +128,7 @@ int main(void)
     enable_cycle_counter();
 
     // Define the number of samples
-    int N = FFT_SIZE; // Change this value as needed (8, 16, 32, 64, 128, 256, 512, 1024)
+    int N = FFT_SIZE;
 
     // Allocate input and output arrays
     q15_t input[N * 2]; // Interleaved input (real + imag)

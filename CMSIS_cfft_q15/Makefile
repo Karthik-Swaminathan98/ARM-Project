@@ -137,8 +137,16 @@ LINKER_SCRIPT=
 # Custom pre-build commands to run.
 PREBUILD=
 
-# Custom post-build commands to run.
-POSTBUILD=
+TARGET_FUNC=arm_cfft_q15 arm_cmplx_mag_q15
+
+POSTBUILD=\
+$(MTB_TOOLCHAIN_GCC_ARM__BASE_DIR)/bin/arm-none-eabi-objdump -S \
+$(MTB_TOOLS__OUTPUT_CONFIG_DIR)/$(APPNAME).$(MTB_TOOLCHAIN_GCC_ARM__SUFFIX_TARGET) \
+> $(MTB_TOOLS__OUTPUT_CONFIG_DIR)/$(APPNAME).objdump && \
+python tools/function_size.py \
+$(MTB_TOOLS__OUTPUT_CONFIG_DIR)/$(APPNAME).map \
+$(MTB_TOOLS__OUTPUT_CONFIG_DIR)/$(APPNAME).objdump \
+$(TARGET_FUNC) > tools/code_size_report.txt
 
 
 ################################################################################

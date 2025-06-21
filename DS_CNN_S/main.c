@@ -21,6 +21,46 @@
 
 static int32_t in_out_buf_main[MAX_NUM_WORDS_IN_OUT];
 
+// Enable DWT cycle counter
+static void enable_cycle_counter() {
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // Enable DWT
+    DWT->CYCCNT = 0;                                // Reset cycle counter
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;            // Enable cycle counter
+}
+
+// Read DWT cycle counter
+static uint32_t read_cycle_counter() {
+    return DWT->CYCCNT;
+}
+
+// Fill stack with known pattern for usage measurement
+static void fill_stack_pattern_to_sp() {
+    register uint32_t *sp;
+    __asm volatile ("mov %0, sp" : "=r" (sp));
+
+    extern uint32_t __StackLimit;
+    uint32_t *p = (uint32_t*)&__StackLimit;
+    while (p < sp) {
+        *p++ = 0xAAAAAAAA;
+    }
+}
+
+// Measure stack usage by identifying overwritten bytes
+static uint32_t measure_stack_usage() {
+    register uint32_t *sp;
+    __asm volatile ("mov %0, sp" : "=r" (sp));
+
+    extern uint32_t __StackLimit;
+    uint32_t *p = (uint32_t*)&__StackLimit;
+    while (p < sp) {
+        if (*p != 0xAAAAAAAA) {
+            break;
+        }
+        p++;
+    }
+    return ((uint32_t)sp - (uint32_t)p); // Stack usage in bytes
+}
+
 /* Get size of additional buffers required by library/framework */
 int ds_cnn_s_s8_get_buffer_size(void)
 {
@@ -115,9 +155,11 @@ int main(void)
         CY_ASSERT(0);
     }
     printf("\r\n--- DS-CNN_S Inference on PSoC 6 M4 ---\r\n");
+    uint32_t total_cycles = 0;
+    uint32_t total_stack = 0;
 
     cmsis_nn_context ctx;
-	const arm_cmsis_nn_status expected = ARM_CMSIS_NN_SUCCESS;
+	//const arm_cmsis_nn_status expected = ARM_CMSIS_NN_SUCCESS;
 
 	ctx.size = ds_cnn_s_s8_get_buffer_size();
 	ctx.buf = malloc(ctx.size);
@@ -167,17 +209,35 @@ int main(void)
 	in_out_dim_1.c = CONV_2D_1_OUT_CH;
 	bias_dims.c = CONV_2D_1_OUT_CH;
 
-	arm_cmsis_nn_status status = arm_convolve_wrapper_s8(&ctx,
-														 &conv_params,
-														 &quant_params,
-														 &in_out_dim_0,
-														 ds_cnn_s_input1,
-														 &conv_filter_dims,
-														 ds_cnn_s_layer_1_conv_2d_weights,
-														 &bias_dims,
-														 ds_cnn_s_layer_1_conv_2d_bias,
-														 &in_out_dim_1,
-														 in_out_buf_0);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    uint32_t start_cycles = read_cycle_counter();
+
+	arm_convolve_wrapper_s8(&ctx,
+							 &conv_params,
+							 &quant_params,
+							 &in_out_dim_0,
+							 ds_cnn_s_input1,
+							 &conv_filter_dims,
+							 ds_cnn_s_layer_1_conv_2d_weights,
+							 &bias_dims,
+							 ds_cnn_s_layer_1_conv_2d_bias,
+							 &in_out_dim_1,
+							 in_out_buf_0);
+
+    uint32_t end_cycles = read_cycle_counter();
+    uint32_t stack_used = measure_stack_usage();
+    uint32_t cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Block 0: Layer 1 - Conv \n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	/***************************** Depthwise Separable Block 1 *************** */
 	// Layer 1 - DW Conv
@@ -210,17 +270,35 @@ int main(void)
 	// Same for all layers in DS block
 	bias_dims.c = in_out_dim_0.c;
 
-	status |= arm_depthwise_conv_wrapper_s8(&ctx,
-											&dw_conv_params,
-											&quant_params,
-											&in_out_dim_1,
-											in_out_buf_0,
-											&dw_conv_filter_dims,
-											ds_cnn_s_layer_2_depthwise_conv_2d_weights,
-											&bias_dims,
-											ds_cnn_s_layer_2_depthwise_conv_2d_bias,
-											&in_out_dim_0,
-											in_out_buf_1);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+
+	arm_depthwise_conv_wrapper_s8(&ctx,
+								&dw_conv_params,
+								&quant_params,
+								&in_out_dim_1,
+								in_out_buf_0,
+								&dw_conv_filter_dims,
+								ds_cnn_s_layer_2_depthwise_conv_2d_weights,
+								&bias_dims,
+								ds_cnn_s_layer_2_depthwise_conv_2d_bias,
+								&in_out_dim_0,
+								in_out_buf_1);
+
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Block 1: Layer 1 - DW Conv\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	// Layer 2 - Conv
 
@@ -244,17 +322,35 @@ int main(void)
 	quant_params.multiplier = (int32_t *)ds_cnn_s_layer_3_conv_2d_output_mult;
 	quant_params.shift = (int32_t *)ds_cnn_s_layer_3_conv_2d_output_shift;
 
-	status |= arm_convolve_wrapper_s8(&ctx,
-									  &conv_params,
-									  &quant_params,
-									  &in_out_dim_0,
-									  in_out_buf_1,
-									  &conv_filter_dims,
-									  ds_cnn_s_layer_3_conv_2d_weights,
-									  &bias_dims,
-									  ds_cnn_s_layer_3_conv_2d_bias,
-									  &in_out_dim_1,
-									  in_out_buf_0);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+
+	arm_convolve_wrapper_s8(&ctx,
+						  &conv_params,
+						  &quant_params,
+						  &in_out_dim_0,
+						  in_out_buf_1,
+						  &conv_filter_dims,
+						  ds_cnn_s_layer_3_conv_2d_weights,
+						  &bias_dims,
+						  ds_cnn_s_layer_3_conv_2d_bias,
+						  &in_out_dim_1,
+						  in_out_buf_0);
+
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Block 1: Layer 2 - Conv\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	/***************************** Depthwise Separable Block 2 *************** */
 	// Layer specific
@@ -264,17 +360,35 @@ int main(void)
 	quant_params.multiplier = (int32_t *)ds_cnn_s_layer_4_depthwise_conv_2d_output_mult;
 	quant_params.shift = (int32_t *)ds_cnn_s_layer_4_depthwise_conv_2d_output_shift;
 
-	status |= arm_depthwise_conv_wrapper_s8(&ctx,
-											&dw_conv_params,
-											&quant_params,
-											&in_out_dim_1,
-											in_out_buf_0,
-											&dw_conv_filter_dims,
-											ds_cnn_s_layer_4_depthwise_conv_2d_weights,
-											&bias_dims,
-											ds_cnn_s_layer_4_depthwise_conv_2d_bias,
-											&in_out_dim_0,
-											in_out_buf_1);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+
+	arm_depthwise_conv_wrapper_s8(&ctx,
+									&dw_conv_params,
+									&quant_params,
+									&in_out_dim_1,
+									in_out_buf_0,
+									&dw_conv_filter_dims,
+									ds_cnn_s_layer_4_depthwise_conv_2d_weights,
+									&bias_dims,
+									ds_cnn_s_layer_4_depthwise_conv_2d_bias,
+									&in_out_dim_0,
+									in_out_buf_1);
+
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Block 2: Layer 1 - DW Conv\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	// Layer specific params
 	conv_params.input_offset = CONV_2D_5_INPUT_OFFSET;
@@ -283,17 +397,35 @@ int main(void)
 	quant_params.multiplier = (int32_t *)ds_cnn_s_layer_5_conv_2d_output_mult;
 	quant_params.shift = (int32_t *)ds_cnn_s_layer_5_conv_2d_output_shift;
 
-	status |= arm_convolve_wrapper_s8(&ctx,
-									  &conv_params,
-									  &quant_params,
-									  &in_out_dim_0,
-									  in_out_buf_1,
-									  &conv_filter_dims,
-									  ds_cnn_s_layer_5_conv_2d_weights,
-									  &bias_dims,
-									  ds_cnn_s_layer_5_conv_2d_bias,
-									  &in_out_dim_1,
-									  in_out_buf_0);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+
+	arm_convolve_wrapper_s8(&ctx,
+							  &conv_params,
+							  &quant_params,
+							  &in_out_dim_0,
+							  in_out_buf_1,
+							  &conv_filter_dims,
+							  ds_cnn_s_layer_5_conv_2d_weights,
+							  &bias_dims,
+							  ds_cnn_s_layer_5_conv_2d_bias,
+							  &in_out_dim_1,
+							  in_out_buf_0);
+
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Block 2: Layer 2 - Conv\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	/***************************** Depthwise Separable Block 3 *************** */
 	// Layer specific
@@ -303,17 +435,30 @@ int main(void)
 	quant_params.multiplier = (int32_t *)ds_cnn_s_layer_6_depthwise_conv_2d_output_mult;
 	quant_params.shift = (int32_t *)ds_cnn_s_layer_6_depthwise_conv_2d_output_shift;
 
-	status |= arm_depthwise_conv_wrapper_s8(&ctx,
-											&dw_conv_params,
-											&quant_params,
-											&in_out_dim_1,
-											in_out_buf_0,
-											&dw_conv_filter_dims,
-											ds_cnn_s_layer_6_depthwise_conv_2d_weights,
-											&bias_dims,
-											ds_cnn_s_layer_6_depthwise_conv_2d_bias,
-											&in_out_dim_0,
-											in_out_buf_1);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+
+	arm_depthwise_conv_wrapper_s8(&ctx,
+								&dw_conv_params,
+								&quant_params,
+								&in_out_dim_1,
+								in_out_buf_0,
+								&dw_conv_filter_dims,
+								ds_cnn_s_layer_6_depthwise_conv_2d_weights,
+								&bias_dims,
+								ds_cnn_s_layer_6_depthwise_conv_2d_bias,
+								&in_out_dim_0,
+								in_out_buf_1);
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Block 3: Layer 1 - DW Conv\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
 
 	// Layer specific params
 	conv_params.input_offset = CONV_2D_7_INPUT_OFFSET;
@@ -321,17 +466,35 @@ int main(void)
 	quant_params.multiplier = (int32_t *)ds_cnn_s_layer_7_conv_2d_output_mult;
 	quant_params.shift = (int32_t *)ds_cnn_s_layer_7_conv_2d_output_shift;
 
-	status |= arm_convolve_wrapper_s8(&ctx,
-									  &conv_params,
-									  &quant_params,
-									  &in_out_dim_0,
-									  in_out_buf_1,
-									  &conv_filter_dims,
-									  ds_cnn_s_layer_7_conv_2d_weights,
-									  &bias_dims,
-									  ds_cnn_s_layer_7_conv_2d_bias,
-									  &in_out_dim_1,
-									  in_out_buf_0);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+
+	arm_convolve_wrapper_s8(&ctx,
+							  &conv_params,
+							  &quant_params,
+							  &in_out_dim_0,
+							  in_out_buf_1,
+							  &conv_filter_dims,
+							  ds_cnn_s_layer_7_conv_2d_weights,
+							  &bias_dims,
+							  ds_cnn_s_layer_7_conv_2d_bias,
+							  &in_out_dim_1,
+							  in_out_buf_0);
+
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Block 3: Layer 2 - Conv\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	/***************************** Depthwise Separable Block 4 *************** */
 	// Layer specific
@@ -341,17 +504,35 @@ int main(void)
 	quant_params.multiplier = (int32_t *)ds_cnn_s_layer_8_depthwise_conv_2d_output_mult;
 	quant_params.shift = (int32_t *)ds_cnn_s_layer_8_depthwise_conv_2d_output_shift;
 
-	status |= arm_depthwise_conv_wrapper_s8(&ctx,
-											&dw_conv_params,
-											&quant_params,
-											&in_out_dim_1,
-											in_out_buf_0,
-											&dw_conv_filter_dims,
-											ds_cnn_s_layer_8_depthwise_conv_2d_weights,
-											&bias_dims,
-											ds_cnn_s_layer_8_depthwise_conv_2d_bias,
-											&in_out_dim_0,
-											in_out_buf_1);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+
+	arm_depthwise_conv_wrapper_s8(&ctx,
+									&dw_conv_params,
+									&quant_params,
+									&in_out_dim_1,
+									in_out_buf_0,
+									&dw_conv_filter_dims,
+									ds_cnn_s_layer_8_depthwise_conv_2d_weights,
+									&bias_dims,
+									ds_cnn_s_layer_8_depthwise_conv_2d_bias,
+									&in_out_dim_0,
+									in_out_buf_1);
+
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Block 4: Layer 1 - DW Conv\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	conv_params.input_offset = CONV_2D_9_INPUT_OFFSET;
 	conv_params.output_offset = CONV_2D_9_OUTPUT_OFFSET;
@@ -359,17 +540,34 @@ int main(void)
 	quant_params.multiplier = (int32_t *)ds_cnn_s_layer_9_conv_2d_output_mult;
 	quant_params.shift = (int32_t *)ds_cnn_s_layer_9_conv_2d_output_shift;
 
-	status |= arm_convolve_wrapper_s8(&ctx,
-									  &conv_params,
-									  &quant_params,
-									  &in_out_dim_0,
-									  in_out_buf_1,
-									  &conv_filter_dims,
-									  ds_cnn_s_layer_9_conv_2d_weights,
-									  &bias_dims,
-									  ds_cnn_s_layer_9_conv_2d_bias,
-									  &in_out_dim_1,
-									  in_out_buf_0);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+	arm_convolve_wrapper_s8(&ctx,
+							  &conv_params,
+							  &quant_params,
+							  &in_out_dim_0,
+							  in_out_buf_1,
+							  &conv_filter_dims,
+							  ds_cnn_s_layer_9_conv_2d_weights,
+							  &bias_dims,
+							  ds_cnn_s_layer_9_conv_2d_bias,
+							  &in_out_dim_1,
+							  in_out_buf_0);
+
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Block 4: Layer 2 - Conv\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	/***************************** Average Pool *************** */
 
@@ -389,8 +587,25 @@ int main(void)
 	in_out_dim_0.w = AVERAGE_POOL_2D_10_OUTPUT_W;
 	in_out_dim_0.c = in_out_dim_1.c;
 
-	status |=
-		arm_avgpool_s8(&ctx, &pool_params, &in_out_dim_1, in_out_buf_0, &conv_filter_dims, &in_out_dim_0, in_out_buf_1);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+
+    arm_avgpool_s8(&ctx, &pool_params, &in_out_dim_1, in_out_buf_0, &conv_filter_dims, &in_out_dim_0, in_out_buf_1);
+
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Average Pool\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	/***************************** Fully Connected ****************/
 	cmsis_nn_fc_params fc_params;
@@ -430,20 +645,42 @@ int main(void)
 					  ds_cnn_s_layer_12_fully_connected_bias);
 #endif
 
-	status |= arm_fully_connected_s8(&ctx,
-									 &fc_params,
-									 &per_tensor_quant_params,
-									 &in_out_dim_0,
-									 in_out_buf_1,
-									 &conv_filter_dims,
-									 ds_cnn_s_layer_12_fully_connected_weights,
-									 &bias_dims,
-									 ds_cnn_s_layer_12_fully_connected_bias,
-									 &in_out_dim_1,
-									 in_out_buf_0);
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
+
+	arm_fully_connected_s8(&ctx,
+							 &fc_params,
+							 &per_tensor_quant_params,
+							 &in_out_dim_0,
+							 in_out_buf_1,
+							 &conv_filter_dims,
+							 ds_cnn_s_layer_12_fully_connected_weights,
+							 &bias_dims,
+							 ds_cnn_s_layer_12_fully_connected_bias,
+							 &in_out_dim_1,
+							 in_out_buf_0);
+
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Fully Connected\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
 
 	/***************************** Softmax *************** */
 
+    // Performance measurement
+    fill_stack_pattern_to_sp();
+    enable_cycle_counter();
+    start_cycles = read_cycle_counter();
 	arm_softmax_s8(in_out_buf_0,
 				   SOFTMAX_13_NUM_ROWS,
 				   SOFTMAX_13_ROW_SIZE,
@@ -452,13 +689,29 @@ int main(void)
 				   SOFTMAX_13_DIFF_MIN,
 				   in_out_buf_0);
 
+    end_cycles = read_cycle_counter();
+    stack_used = measure_stack_usage();
+    cycle_count = end_cycles - start_cycles;
+    // Print results
+    printf("\n\r");
+    printf("Softmax\n\r");
+    printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
+    printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+    printf("-----DSCNN_SMALL benchmark complete-----\n\r");
+    printf("Total Cycle Count: %lu\n\r", (unsigned long)total_cycles);
+    printf("Total Stack Usage: %lu bytes\n\r", (unsigned long)total_stack);
+
+    // Add to totals
+    total_cycles += cycle_count;
+    total_stack += stack_used;
+
 	// After inference, buf0 holds the softmax output
 	const char *labels[12] = {"yes","no","up","down","left","right","on","off","stop","go","unknown","silence"};
 	int8_t *output = in_out_buf_0;
-	printf("Softmax output (12 classes):\r\n");
-	for (int i = 0; i < SOFTMAX_13_ROW_SIZE; ++i) {
-		printf("Label %d: %s	= %4d\r\n", i, labels[i], output[i]);
-	}
+//	printf("Softmax output (12 classes):\r\n");
+//	for (int i = 0; i < SOFTMAX_13_ROW_SIZE; ++i) {
+//		printf("Label %d: %s	= %4d\r\n", i, labels[i], output[i]);
+//	}
 
 	// Validate against reference
 	bool ok = validate(output,

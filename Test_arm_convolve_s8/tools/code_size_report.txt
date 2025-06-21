@@ -1,0 +1,26 @@
+[*] Analyzing file: C:/Users/SwaminathanK/Modustoolbox-workspace/NN_convolution_benchmark/build/APP_CY8CKIT-062-WIFI-BT/Debug/mtb-example-hal-hello-world.map
+[*] Detected .map file
+
+[*] Function: arm_convolve_wrapper_s8
+    Own size: 252 bytes
+    Total size (with dependencies): 4472 bytes
+
+    [*] Breakdown (including dependencies):
+        arm_convolve_s8                  1536 bytes
+        arm_nn_mat_mult_kernel_row_offset_s8_s16   1288 bytes
+        arm_nn_mat_mult_kernel_s8_s16    1284 bytes
+        arm_convolve_wrapper_s8           252 bytes
+        arm_s8_to_s16_unordered_with_offset    112 bytes
+        memset                              0 bytes
+        memcpy                              0 bytes
+------------------------------------------------------------
+[*] Function: arm_convolve_s16
+    Own size: 1100 bytes
+    Total size (with dependencies): 3428 bytes
+
+    [*] Breakdown (including dependencies):
+        arm_nn_mat_mult_kernel_s16       2328 bytes
+        arm_convolve_s16                 1100 bytes
+        memset                              0 bytes
+        memcpy                              0 bytes
+------------------------------------------------------------

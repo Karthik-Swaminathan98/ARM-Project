@@ -5,7 +5,11 @@
 //#include "funcs_def.h"
 
 void fully_connected_arm_fully_connected_s8();
+void fc_per_ch_arm_fully_connected_s8();
+void fully_connected_mve_0_arm_fully_connected_s8();
 void fully_connected_int16_arm_fully_connected_s16();
+void fully_connected_int16_big_arm_fully_connected_s16();
+void fc_int16_slow_arm_fully_connected_s16();
 
 
 int main(void)
@@ -29,10 +33,16 @@ int main(void)
         CY_ASSERT(0);
     }
 	printf("\n\r");
-    printf("Starting CMSIS-Fully Connected Functions benchmark\n\r");
+    printf("-----Starting CMSIS-Fully Connected Functions benchmark-----\n\r");
+    printf("*****ARM Fully Connected S8*****\n\r");
     fully_connected_arm_fully_connected_s8();
+    fc_per_ch_arm_fully_connected_s8();
+    fully_connected_mve_0_arm_fully_connected_s8();
+    printf("\n\r");
+    printf("*****ARM Fully ConnectedR S16*****\n\r");
     fully_connected_int16_arm_fully_connected_s16();
-    printf("All tests are passed.\n\r");
+    fully_connected_int16_big_arm_fully_connected_s16();
+    fc_int16_slow_arm_fully_connected_s16();
 	printf("Finish Fully Connected Functions benchmark\n\r");
 	return 0;
 

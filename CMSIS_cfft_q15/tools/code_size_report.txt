@@ -1,0 +1,22 @@
+[*] Analyzing file: C:/Users/SwaminathanK/Modustoolbox-workspace/CMSIS_cfft_q15/build/APP_CY8CKIT-062-WIFI-BT/Debug/mtb-example-hal-hello-world.map
+[*] Detected .map file
+
+[*] Function: arm_cfft_q15
+    Own size: 1424 bytes
+    Total size (with dependencies): 2936 bytes
+
+    [*] Breakdown (including dependencies):
+        arm_cfft_q15                     1424 bytes
+        arm_radix4_butterfly_inverse_q15.constprop.0    584 bytes
+        arm_radix4_butterfly_q15.constprop.0    584 bytes
+        arm_cfft_radix4by2_inverse_q15    172 bytes
+        arm_cfft_radix4by2_q15            172 bytes
+------------------------------------------------------------
+[*] Function: arm_cmplx_mag_q15
+    Own size: 188 bytes
+    Total size (with dependencies): 400 bytes
+
+    [*] Breakdown (including dependencies):
+        arm_sqrt_q31                      212 bytes
+        arm_cmplx_mag_q15                 188 bytes
+------------------------------------------------------------

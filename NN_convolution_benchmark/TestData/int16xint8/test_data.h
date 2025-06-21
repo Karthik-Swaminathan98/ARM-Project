@@ -1,0 +1,7 @@
+#include "../../TestData/int16xint8/bias.h"
+#include "../../TestData/int16xint8/config_data.h"
+#include "../../TestData/int16xint8/input.h"
+#include "../../TestData/int16xint8/output.h"
+#include "../../TestData/int16xint8/output_multiplier.h"
+#include "../../TestData/int16xint8/output_shift.h"
+#include "../../TestData/int16xint8/weights.h"

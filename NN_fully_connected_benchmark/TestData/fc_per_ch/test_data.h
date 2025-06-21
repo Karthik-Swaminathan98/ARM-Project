@@ -1,0 +1,7 @@
+#include "../../TestData/fc_per_ch/bias.h"
+#include "../../TestData/fc_per_ch/config_data.h"
+#include "../../TestData/fc_per_ch/input.h"
+#include "../../TestData/fc_per_ch/output.h"
+#include "../../TestData/fc_per_ch/output_multiplier.h"
+#include "../../TestData/fc_per_ch/output_shift.h"
+#include "../../TestData/fc_per_ch/weights.h"

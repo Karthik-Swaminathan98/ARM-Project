@@ -1,0 +1,17 @@
+[*] Analyzing file: C:/Users/SwaminathanK/Modustoolbox-workspace/NN_Activation_benchmark/build/APP_CY8CKIT-062-WIFI-BT/Debug/mtb-example-hal-hello-world.map
+[*] Detected .map file
+
+[*] Function: arm_relu6_s8
+    Own size: 28 bytes
+    Total size (with dependencies): 28 bytes
+
+    [*] Breakdown (including dependencies):
+        arm_relu6_s8                       28 bytes
+------------------------------------------------------------
+[*] Function: arm_nn_activation_s16
+    Own size: 256 bytes
+    Total size (with dependencies): 256 bytes
+
+    [*] Breakdown (including dependencies):
+        arm_nn_activation_s16             256 bytes
+------------------------------------------------------------

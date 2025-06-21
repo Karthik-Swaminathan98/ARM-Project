@@ -259,3 +259,10 @@
 144	1405	7691798416875383	C:/Users/SwaminathanK/Modustoolbox-workspace/NN_Softmax_Benchmark/build/Debug/local/test_arm_softmax_s16.o	d2a56bb09757e499
 159	1025	7691799503393767	C:/Users/SwaminathanK/Modustoolbox-workspace/NN_Softmax_Benchmark/build/Debug/local/test_arm_softmax_s8.o	bfe71204f5db0b2b
 1026	1891	7691799512063208	build/APP_CY8CKIT-062-WIFI-BT/Debug/mtb-example-hal-hello-world.elf	bdb87dbf6451f64d
+289	1501	7694298629046375	C:/Users/SwaminathanK/Modustoolbox-workspace/NN_Softmax_Benchmark/build/Debug/local/test_arm_softmax_s16.o	d2a56bb09757e499
+330	1524	7694298629452069	C:/Users/SwaminathanK/Modustoolbox-workspace/NN_Softmax_Benchmark/build/Debug/local/test_arm_softmax_s8_s16.o	25b9c12f89997bb3
+312	1560	7694298629276397	C:/Users/SwaminathanK/Modustoolbox-workspace/NN_Softmax_Benchmark/build/Debug/local/test_arm_softmax_s8.o	bfe71204f5db0b2b
+1560	2528	7694298641763362	build/APP_CY8CKIT-062-WIFI-BT/Debug/mtb-example-hal-hello-world.elf	bdb87dbf6451f64d
+105	1538	7704892712211491	C:/Users/SwaminathanK/Modustoolbox-workspace/NN_Softmax_Benchmark/build/Debug/local/main.o	9a01723dc356c8e1
+223	1581	7704892713388828	C:/Users/SwaminathanK/Modustoolbox-workspace/NN_Softmax_Benchmark/build/Debug/local/test_arm_softmax_s8.o	bfe71204f5db0b2b
+1581	2578	7704892726967028	build/APP_CY8CKIT-062-WIFI-BT/Debug/mtb-example-hal-hello-world.elf	bdb87dbf6451f64d
