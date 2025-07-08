@@ -1,57 +1,9 @@
-#include <stdlib.h>
-#include <arm_nnfunctions.h>
-#include "validate.h"
-
-#include "cyhal.h"
-#include "cybsp.h"
-#include "cy_retarget_io.h"
-#include "arm_math.h"
-#include "core_cm4.h"
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
+#include "main.h"
 #include "TestData/fc_int16_slow/test_data.h"
 #include "TestData/fully_connected_int16/test_data.h"
 #include "../TestData/fully_connected_int16_big/test_data.h"
 
-static void enable_cycle_counter() {
-    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // Enable DWT
-    DWT->CYCCNT = 0;                                // Reset cycle counter
-    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;            // Enable cycle counter
-}
-
-static uint32_t read_cycle_counter() {
-    return DWT->CYCCNT;
-}
-
-extern uint32_t __StackLimit;
-
-static void fill_stack_pattern_to_sp() {
-    register uint32_t *sp;
-    __asm volatile ("mov %0, sp" : "=r" (sp));
-
-    uint32_t *p = (uint32_t*)&__StackLimit;
-    while (p < sp) {
-        *p++ = 0xAAAAAAAA;
-    }
-}
-
-static uint32_t measure_stack_usage() {
-    register uint32_t *sp;
-    __asm volatile ("mov %0, sp" : "=r" (sp));
-
-    uint32_t *p = (uint32_t*)&__StackLimit;
-    while (p < sp) {
-        if (*p != 0xAAAAAAAA) {
-            break;
-        }
-        p++;
-    }
-
-    return ((uint32_t)sp - (uint32_t)p); // Stack usage in bytes
-}
-
-void fully_connected_int16_arm_fully_connected_s16(void)
+RAM_FUNC void fully_connected_int16_arm_fully_connected_s16(void)
 {
     //const arm_cmsis_nn_status expected = ARM_CMSIS_NN_SUCCESS;
     int16_t output[FULLY_CONNECTED_INT16_DST_SIZE] = {0};
@@ -95,12 +47,9 @@ void fully_connected_int16_arm_fully_connected_s16(void)
     ctx.size = buf_size;
 
     enable_cycle_counter();
+    fill_stack_pattern_to_sp();
+    uint32_t start_cycles = read_cycle_counter();
 
-	// Fill stack with a known pattern
-	fill_stack_pattern_to_sp();
-
-	// Measure cycles
-	uint32_t start_cycles_s16 = read_cycle_counter();
     arm_fully_connected_s16(&ctx,
 							 &fc_params,
 							 &quant_params,
@@ -112,14 +61,18 @@ void fully_connected_int16_arm_fully_connected_s16(void)
 							 bias_data,
 							 &output_dims,
 							 output);
-	// Measure cycles
-	uint32_t end_cycles_s16 = read_cycle_counter();
 
-    // Measure stack usage
-    uint32_t stack_used_s16 = measure_stack_usage();
-
-	// Calculate cycle count
-	uint32_t cycle_count_s16 = end_cycles_s16 - start_cycles_s16;
+    uint32_t end_cycles = read_cycle_counter();
+    uint32_t cycle_count = end_cycles - start_cycles;
+    uint32_t instr_est = cycle_count
+                       - DWT->CPICNT
+                       - DWT->EXCCNT
+                       - DWT->SLEEPCNT
+                       - DWT->LSUCNT
+                       + DWT->FOLDCNT;
+    uint32_t stack_used = measure_stack_usage();
+    float time_sec = (float)cycle_count / clkFastfreq;
+    float time_us = time_sec * 1e6f;
 
     if (ctx.buf)
     {
@@ -129,15 +82,17 @@ void fully_connected_int16_arm_fully_connected_s16(void)
     }
     printf("\n\r");
 	if (validate_s16(output, output_ref, output_ref_size)) {
-		printf("arm_fully_connected_s16 output validation PASSED\n\r");
-		printf("Stack Used for arm_fully_connected_s16: %lu bytes\n\r", (unsigned long)stack_used_s16);
-		printf("Cycle Count for arm_fully_connected_s16: %lu\n\r", (unsigned long)cycle_count_s16);
+		printf("arm_fully_connected_int16 output validation PASSED\n\r");
+        printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+        printf("Estimated Instruction Count: %lu\n\r", instr_est);
+        printf("Execution Time (approx): %.3f us\n\r", time_us);
+        printf("Stack Used: %lu bytes\n\r\n", (unsigned long)stack_used);
 	} else {
 		printf("arm_fully_connected_s16 output validation FAILED\n\r");
 	}
 }
 
-void fully_connected_int16_big_arm_fully_connected_s16(void)
+RAM_FUNC void fully_connected_int16_big_arm_fully_connected_s16(void)
 {
     int16_t output[FULLY_CONNECTED_INT16_BIG_DST_SIZE] = {0};
 
@@ -181,8 +136,8 @@ void fully_connected_int16_big_arm_fully_connected_s16(void)
 
     enable_cycle_counter();
     fill_stack_pattern_to_sp();
-
     uint32_t start_cycles = read_cycle_counter();
+
     arm_fully_connected_s16(&ctx,
                              &fc_params,
                              &quant_params,
@@ -194,9 +149,18 @@ void fully_connected_int16_big_arm_fully_connected_s16(void)
                              bias_data,
                              &output_dims,
                              output);
+
     uint32_t end_cycles = read_cycle_counter();
-    uint32_t stack_used = measure_stack_usage();
     uint32_t cycle_count = end_cycles - start_cycles;
+    uint32_t instr_est = cycle_count
+                       - DWT->CPICNT
+                       - DWT->EXCCNT
+                       - DWT->SLEEPCNT
+                       - DWT->LSUCNT
+                       + DWT->FOLDCNT;
+    uint32_t stack_used = measure_stack_usage();
+    float time_sec = (float)cycle_count / clkFastfreq;
+    float time_us = time_sec * 1e6f;
 
     if (ctx.buf)
     {
@@ -206,14 +170,16 @@ void fully_connected_int16_big_arm_fully_connected_s16(void)
     printf("\n\r");
     if (validate_s16(output, output_ref, output_ref_size)) {
         printf("arm_fully_connected_s16 (BIG) output validation PASSED\n\r");
-        printf("Stack Used for arm_fully_connected_s16 (BIG): %lu bytes\n\r", (unsigned long)stack_used);
-        printf("Cycle Count for arm_fully_connected_s16 (BIG): %lu\n\r", (unsigned long)cycle_count);
+        printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+        printf("Estimated Instruction Count: %lu\n\r", instr_est);
+        printf("Execution Time (approx): %.3f us\n\r", time_us);
+        printf("Stack Used: %lu bytes\n\r\n", (unsigned long)stack_used);
     } else {
         printf("arm_fully_connected_s16 (BIG) output validation FAILED\n\r");
     }
 }
 
-void fc_int16_slow_arm_fully_connected_s16(void)
+RAM_FUNC void fc_int16_slow_arm_fully_connected_s16(void)
 {
     int16_t output[FC_INT16_SLOW_DST_SIZE] = {0};
 
@@ -257,8 +223,8 @@ void fc_int16_slow_arm_fully_connected_s16(void)
 
     enable_cycle_counter();
     fill_stack_pattern_to_sp();
-
     uint32_t start_cycles = read_cycle_counter();
+
     arm_fully_connected_s16(&ctx,
                              &fc_params,
                              &quant_params,
@@ -270,9 +236,18 @@ void fc_int16_slow_arm_fully_connected_s16(void)
                              bias_data,
                              &output_dims,
                              output);
+
     uint32_t end_cycles = read_cycle_counter();
-    uint32_t stack_used = measure_stack_usage();
     uint32_t cycle_count = end_cycles - start_cycles;
+    uint32_t instr_est = cycle_count
+                       - DWT->CPICNT
+                       - DWT->EXCCNT
+                       - DWT->SLEEPCNT
+                       - DWT->LSUCNT
+                       + DWT->FOLDCNT;
+    uint32_t stack_used = measure_stack_usage();
+    float time_sec = (float)cycle_count / clkFastfreq;
+    float time_us = time_sec * 1e6f;
 
     if (ctx.buf)
     {
@@ -282,8 +257,10 @@ void fc_int16_slow_arm_fully_connected_s16(void)
     printf("\n\r");
     if (validate_s16(output, output_ref, output_ref_size)) {
         printf("arm_fully_connected_s16 (SLOW) output validation PASSED\n\r");
-        printf("Stack Used for arm_fully_connected_s16 (SLOW): %lu bytes\n\r", (unsigned long)stack_used);
-        printf("Cycle Count for arm_fully_connected_s16 (SLOW): %lu\n\r", (unsigned long)cycle_count);
+        printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+        printf("Estimated Instruction Count: %lu\n\r", instr_est);
+        printf("Execution Time (approx): %.3f us\n\r", time_us);
+        printf("Stack Used: %lu bytes\n\r\n", (unsigned long)stack_used);
     } else {
         printf("arm_fully_connected_s16 (SLOW) output validation FAILED\n\r");
     }

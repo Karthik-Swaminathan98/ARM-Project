@@ -99,8 +99,10 @@ SOURCES=
 # Like SOURCES, but for include directories. Value should be paths to
 # directories (without a leading -I).
 INCLUDES = C:/Users/SwaminathanK/Desktop/Thesis/DSP_Library_ARM/CMSIS-DSP/CMSIS-DSP/Include \
-           C:/Users/SwaminathanK/Desktop/Thesis/DSP_Library_ARM/CMSIS-DSP/CMSIS/Core/Include
-
+			C:/Users/SwaminathanK/Desktop/Thesis/DSP_Library_ARM/CMSIS-DSP/CMSIS-DSP/Include/dsp \
+			C:/Users/SwaminathanK/Desktop/Thesis/DSP_Library_ARM/CMSIS-DSP/CMSIS-DSP/PrivateInclude \
+			C:/Users/SwaminathanK/Desktop/Thesis/DSP_Library_ARM/CMSIS-DSP/CMSIS_6/CMSIS/Core/Include \
+			C:/Users/SwaminathanK/Desktop/Thesis/DSP_Library_ARM/CMSIS-DSP/CMSIS_6/CMSIS/Core/Include/m-profile
 # Add additional defines to the build process (without a leading -D).
 DEFINES=
 
@@ -126,7 +128,7 @@ CXXFLAGS=
 ASFLAGS=
 
 # Additional / custom linker flags.
-LDFLAGS= -LCMSIS -lCMSISDSP_Os
+LDFLAGS= -L./CMSIS -lCMSISDSP_Ofast
 
 # Additional / custom libraries to link in to the application.
 LDLIBS=

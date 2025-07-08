@@ -1,58 +1,10 @@
-#include <stdlib.h>
-#include <arm_nnfunctions.h>
+#include "main.h"
 #include "../TestData/fully_connected_mve_0/test_data.h"
 #include "TestData/fc_per_ch/test_data.h"
 #include "TestData/fully_connected/test_data.h"
-#include "validate.h"
-
-#include "cyhal.h"
-#include "cybsp.h"
-#include "cy_retarget_io.h"
-#include "arm_math.h"
-#include "core_cm4.h"
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
 
 
-static void enable_cycle_counter() {
-    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // Enable DWT
-    DWT->CYCCNT = 0;                                // Reset cycle counter
-    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;            // Enable cycle counter
-}
-
-static uint32_t read_cycle_counter() {
-    return DWT->CYCCNT;
-}
-
-extern uint32_t __StackLimit;
-
-static void fill_stack_pattern_to_sp() {
-    register uint32_t *sp;
-    __asm volatile ("mov %0, sp" : "=r" (sp));
-
-    uint32_t *p = (uint32_t*)&__StackLimit;
-    while (p < sp) {
-        *p++ = 0xAAAAAAAA;
-    }
-}
-
-static uint32_t measure_stack_usage() {
-    register uint32_t *sp;
-    __asm volatile ("mov %0, sp" : "=r" (sp));
-
-    uint32_t *p = (uint32_t*)&__StackLimit;
-    while (p < sp) {
-        if (*p != 0xAAAAAAAA) {
-            break;
-        }
-        p++;
-    }
-
-    return ((uint32_t)sp - (uint32_t)p); // Stack usage in bytes
-}
-
-void fully_connected_arm_fully_connected_s8(void)
+RAM_FUNC void fully_connected_arm_fully_connected_s8(void)
 {
     //const arm_cmsis_nn_status expected = ARM_CMSIS_NN_SUCCESS;
     int8_t output[FULLY_CONNECTED_DST_SIZE] = {0};
@@ -105,13 +57,9 @@ void fully_connected_arm_fully_connected_s8(void)
                                         bias_data));
 #endif
 
-	enable_cycle_counter();
-
-	// Fill stack with a known pattern
-	fill_stack_pattern_to_sp();
-
-    // Measure cycles
-    uint32_t start_cycles_s8 = read_cycle_counter();
+    enable_cycle_counter();
+    fill_stack_pattern_to_sp();
+    uint32_t start_cycles = read_cycle_counter();
 
     arm_fully_connected_s8(&ctx,
 							&fc_params,
@@ -124,14 +72,19 @@ void fully_connected_arm_fully_connected_s8(void)
 							bias_data,
 							&output_dims,
 							output);
-    // Measure cycles
-    uint32_t end_cycles_s8 = read_cycle_counter();
 
-    // Measure stack usage
-    uint32_t stack_used_s8 = measure_stack_usage();
+    uint32_t end_cycles = read_cycle_counter();
+    uint32_t cycle_count = end_cycles - start_cycles;
+    uint32_t instr_est = cycle_count
+                       - DWT->CPICNT
+                       - DWT->EXCCNT
+                       - DWT->SLEEPCNT
+                       - DWT->LSUCNT
+                       + DWT->FOLDCNT;
+    uint32_t stack_used = measure_stack_usage();
+    float time_sec = (float)cycle_count / clkFastfreq;
+    float time_us = time_sec * 1e6f;
 
-    // Calculate cycle count
-    uint32_t cycle_count_s8 = end_cycles_s8 - start_cycles_s8;
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -141,14 +94,16 @@ void fully_connected_arm_fully_connected_s8(void)
     printf("\n\r");
 	if (validate(output, output_ref, output_ref_size)) {
 		printf("arm_fully_connected_s8 output validation PASSED\n\r");
-		printf("Stack Used for arm_fully_connected_s8: %lu bytes\n\r", (unsigned long)stack_used_s8);
-		printf("Cycle Count for arm_fully_connected_s8: %lu\n\r", (unsigned long)cycle_count_s8);
+        printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+        printf("Estimated Instruction Count: %lu\n\r", instr_est);
+        printf("Execution Time (approx): %.3f us\n\r", time_us);
+        printf("Stack Used: %lu bytes\n\r\n", (unsigned long)stack_used);
 	} else {
 		printf("arm_fully_connected_s8 output validation FAILED\n\r");
 	}
 }
 
-void fc_per_ch_arm_fully_connected_s8(void)
+RAM_FUNC void fc_per_ch_arm_fully_connected_s8(void)
 {
     int8_t output[FC_PER_CH_DST_SIZE] = {0};
 
@@ -216,14 +171,24 @@ void fc_per_ch_arm_fully_connected_s8(void)
                                        output);
 
     uint32_t end_cycles = read_cycle_counter();
-    uint32_t stack_used = measure_stack_usage();
     uint32_t cycle_count = end_cycles - start_cycles;
+    uint32_t instr_est = cycle_count
+                       - DWT->CPICNT
+                       - DWT->EXCCNT
+                       - DWT->SLEEPCNT
+                       - DWT->LSUCNT
+                       + DWT->FOLDCNT;
+    uint32_t stack_used = measure_stack_usage();
+    float time_sec = (float)cycle_count / clkFastfreq;
+    float time_us = time_sec * 1e6f;
 
     printf("\n\r");
     if (validate(output, output_ref, output_ref_size)) {
         printf("fc_per_ch_arm_fully_connected_s8 output validation PASSED (per-channel)\n\r");
-        printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
         printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+        printf("Estimated Instruction Count: %lu\n\r", instr_est);
+        printf("Execution Time (approx): %.3f us\n\r", time_us);
+        printf("Stack Used: %lu bytes\n\r\n", (unsigned long)stack_used);
     } else {
         printf("fc_per_ch_arm_fully_connected_s8 output validation FAILED (per-channel)\n\r");
     }
@@ -236,7 +201,7 @@ void fc_per_ch_arm_fully_connected_s8(void)
 
     enable_cycle_counter();
     fill_stack_pattern_to_sp();
-    uint32_t start_cycles_wrap = read_cycle_counter();
+    start_cycles = read_cycle_counter();
 
     arm_fully_connected_wrapper_s8(&ctx,
                                    &fc_params,
@@ -250,9 +215,17 @@ void fc_per_ch_arm_fully_connected_s8(void)
                                    &output_dims,
                                    output);
 
-    uint32_t end_cycles_wrap = read_cycle_counter();
-    uint32_t stack_used_wrap = measure_stack_usage();
-    uint32_t cycle_count_wrap = end_cycles_wrap - start_cycles_wrap;
+    end_cycles = read_cycle_counter();
+    cycle_count = end_cycles - start_cycles;
+    instr_est = cycle_count
+                       - DWT->CPICNT
+                       - DWT->EXCCNT
+                       - DWT->SLEEPCNT
+                       - DWT->LSUCNT
+                       + DWT->FOLDCNT;
+    stack_used = measure_stack_usage();
+    time_sec = (float)cycle_count / clkFastfreq;
+    time_us = time_sec * 1e6f;
 
     if (ctx.buf)
     {
@@ -262,14 +235,16 @@ void fc_per_ch_arm_fully_connected_s8(void)
     printf("\n\r");
     if (validate(output, output_ref, output_ref_size)) {
         printf("fc_per_ch_arm_fully_connected_wrapper_s8 output validation PASSED (wrapper)\n\r");
-        printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used_wrap);
-        printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count_wrap);
+        printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+        printf("Estimated Instruction Count: %lu\n\r", instr_est);
+        printf("Execution Time (approx): %.3f us\n\r", time_us);
+        printf("Stack Used: %lu bytes\n\r\n", (unsigned long)stack_used);
     } else {
         printf("fc_per_ch_arm_fully_connected_wrapper_s8 output validation FAILED (wrapper)\n\r");
     }
 }
 
-void fully_connected_mve_0_arm_fully_connected_s8(void)
+RAM_FUNC void fully_connected_mve_0_arm_fully_connected_s8(void)
 {
     int8_t output[FULLY_CONNECTED_MVE_0_DST_SIZE] = {0};
 
@@ -337,8 +312,16 @@ void fully_connected_mve_0_arm_fully_connected_s8(void)
                            output);
 
     uint32_t end_cycles = read_cycle_counter();
-    uint32_t stack_used = measure_stack_usage();
     uint32_t cycle_count = end_cycles - start_cycles;
+    uint32_t instr_est = cycle_count
+                       - DWT->CPICNT
+                       - DWT->EXCCNT
+                       - DWT->SLEEPCNT
+                       - DWT->LSUCNT
+                       + DWT->FOLDCNT;
+    uint32_t stack_used = measure_stack_usage();
+    float time_sec = (float)cycle_count / clkFastfreq;
+    float time_us = time_sec * 1e6f;
 
     if (ctx.buf)
     {
@@ -348,8 +331,10 @@ void fully_connected_mve_0_arm_fully_connected_s8(void)
     printf("\n\r");
     if (validate(output, output_ref, output_ref_size)) {
         printf("fully_connected_mve_0_arm_fully_connected_s8 output validation PASSED\n\r");
-        printf("Stack Used: %lu bytes\n\r", (unsigned long)stack_used);
         printf("Cycle Count: %lu\n\r", (unsigned long)cycle_count);
+        printf("Estimated Instruction Count: %lu\n\r", instr_est);
+        printf("Execution Time (approx): %.3f us\n\r", time_us);
+        printf("Stack Used: %lu bytes\n\r\n", (unsigned long)stack_used);
     } else {
         printf("fully_connected_mve_0_arm_fully_connected_s8 output validation FAILED\n\r");
     }

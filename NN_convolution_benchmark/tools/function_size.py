@@ -10,7 +10,7 @@ def parse_map_file(filename):
 
     with open(filename, 'r') as f:
         for line in f:
-            # Match section like .text.arm_cfft_f32
+            # Match section like .text.arm_function_name
             sec_match = re.match(r'\s*\.text\.([^\s]+)', line)
             if sec_match:
                 current_func = sec_match.group(1)
@@ -26,6 +26,7 @@ def parse_map_file(filename):
 
     return functions
 
+
 def parse_objdump_file(filename):
     """Build call graph from objdump disassembly."""
     call_graph = defaultdict(set)
@@ -33,18 +34,21 @@ def parse_objdump_file(filename):
 
     with open(filename, 'r') as f:
         for line in f:
+            # Function header
             header = re.match(r'^\s*([0-9a-fA-F]+) <([\w$@.]+)>:', line)
             if header:
                 current_func = header.group(2)
                 continue
 
             if current_func:
-                call = re.search(r'\b(bl|blx)\b.*<([\w$@.]+)>', line)
+                # Match calls with bl, blx, b.w, b
+                call = re.search(r'\b(b|bl|blx|b\.w)\b.*<([\w$@.]+)>', line)
                 if call:
                     callee = call.group(2)
                     call_graph[current_func].add(callee)
 
     return call_graph
+
 
 def compute_total_size(functions, call_graph, root_func):
     visited = set()
@@ -68,6 +72,7 @@ def compute_total_size(functions, call_graph, root_func):
 
     return total_size, breakdown
 
+
 def main():
     if len(sys.argv) < 4:
         print("Usage: python function_size.py <map_file> <objdump_file> <function_name1> [<function_name2> ...]")
@@ -86,24 +91,27 @@ def main():
 
     functions = parse_map_file(map_file)
     call_graph = parse_objdump_file(objdump_file)
+    print(call_graph)
 
     for root_func in root_funcs:
         print(f"[*] Function: {root_func}")
 
-        if root_func not in functions:
+        own_size = functions.get(root_func, {}).get('size', None)
+        if own_size is None:
             print(f"    [!] Not found in map file.")
             continue
 
         total_size, breakdown = compute_total_size(functions, call_graph, root_func)
 
-        print(f"    Own size: {functions.get(root_func, {}).get('size', 0)} bytes")
-        print(f"    Total size (with dependencies): {total_size} bytes")
+        print(f"    Own size: {own_size} bytes")
+        print(f"    Total size (with dependencies): {total_size} bytes\n")
 
-        print("\n    [*] Breakdown (including dependencies):")
+        print("    [*] Breakdown (including dependencies):")
         for name, size in sorted(breakdown, key=lambda x: -x[1]):
-            print(f"        {name:<30} {size:>6} bytes")
+            print(f"        {name:<35} {size:>6} bytes")
 
         print("-" * 60)
+
 
 if __name__ == "__main__":
     main()

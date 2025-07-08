@@ -65,7 +65,7 @@ TOOLCHAIN=GCC_ARM
 #
 # If CONFIG is manually edited, ensure to update or regenerate launch configurations
 # for your IDE.
-CONFIG=Debug
+CONFIG=Custom
 
 # If set to "true" or "1", display full command-lines when building.
 VERBOSE=1
@@ -113,8 +113,10 @@ VFP_SELECT=
 #
 # NOTE: Includes and defines should use the INCLUDES and DEFINES variable
 # above.
-CFLAGS=
-
+CFLAGS=-O2 -ffunction-sections -fdata-sections -flto \
+-fomit-frame-pointer -fno-strict-aliasing -fshort-wchar \
+-std=c99 -fpack-struct -fshort-enums -fno-jump-tables \
+-Wall -Wextra -Wshadow -Werror -Wno-nonnull-compare -g0 -Wno-address-of-packed-member
 # Additional / custom C++ compiler flags.
 #
 # NOTE: Includes and defines should use the INCLUDES and DEFINES variable
@@ -139,7 +141,7 @@ LINKER_SCRIPT=
 # Custom pre-build commands to run.
 PREBUILD=
 
-TARGET_FUNC=arm_convolve_wrapper_s8 arm_convolve_s16
+TARGET_FUNC=arm_transpose_s8 arm_transpose_conv_wrapper_s8
 
 POSTBUILD=\
 $(MTB_TOOLCHAIN_GCC_ARM__BASE_DIR)/bin/arm-none-eabi-objdump -S \

@@ -65,7 +65,7 @@ TOOLCHAIN=GCC_ARM
 #
 # If CONFIG is manually edited, ensure to update or regenerate launch configurations
 # for your IDE.
-CONFIG=Debug
+CONFIG=Release
 
 # If set to "true" or "1", display full command-lines when building.
 VERBOSE=1
@@ -139,7 +139,7 @@ LINKER_SCRIPT=
 # Custom pre-build commands to run.
 PREBUILD=
 
-TARGET_FUNC=arm_convolve_wrapper_s8 arm_convolve_s16
+TARGET_FUNC=arm_softmax_s8 arm_softmax_s16 arm_softmax_s8_s16
 
 POSTBUILD=\
 $(MTB_TOOLCHAIN_GCC_ARM__BASE_DIR)/bin/arm-none-eabi-objdump -S \
