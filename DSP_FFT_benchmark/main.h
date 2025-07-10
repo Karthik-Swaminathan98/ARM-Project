@@ -36,5 +36,7 @@ void enable_cycle_counter(void);
 uint32_t read_cycle_counter(void);
 uint32_t measure_stack_usage(void);
 void calculate_averages(uint32_t* cycle_counts, uint32_t* instr_counts, float* exec_time_us, uint32_t* stack_usages, int num_executions);
+void generate_sine_wave_f32(float32_t* input, int N, float signal_freq, float sampling_freq);
+void generate_sine_wave_q15(q15_t* input, int N, float signal_freq, float sampling_freq);
 
 #endif // MAIN_H

@@ -1,13 +1,5 @@
 #include "main.h"
 
-RAM_FUNC void generate_sine_wave_f32(float32_t* input, int N, float signal_freq, float sampling_freq) {
-    for (int i = 0; i < N; i++) {
-        float value = sinf(2 * M_PI * signal_freq * i / sampling_freq);
-        input[2 * i] = value;  // Real part
-        input[2 * i + 1] = 0;  // Imaginary part
-    }
-}
-
 RAM_FUNC void benchmark_f32() {
     for (int size_idx = 0; size_idx < FFT_SIZES_COUNT; size_idx++) {
         int N = FFT_SIZES[size_idx];

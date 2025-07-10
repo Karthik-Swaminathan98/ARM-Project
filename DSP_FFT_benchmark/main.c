@@ -2,6 +2,8 @@
 
 void benchmark_f32(void);
 void benchmark_q15(void);
+void benchmark_ifft_f32(void);
+void benchmark_ifft_q15(void);
 
 uint32_t clkFastfreq = 0;
 
@@ -40,6 +42,14 @@ RAM_FUNC int main(void)
 
     printf("*****Benchmarking ARM CFFT Q15*****\n\r");
     benchmark_q15();
+    printf("\n\r");
+
+    printf("*****Benchmarking ARM ICFFT F32*****\n\r");
+    benchmark_ifft_f32();
+    printf("\n\r");
+
+    printf("*****Benchmarking ARM ICFFT Q15*****\n\r");
+    benchmark_ifft_q15();
     printf("\n\r");
 
     printf("All tests are completed.\n\r");

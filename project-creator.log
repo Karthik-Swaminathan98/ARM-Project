@@ -1,7 +1,7 @@
 Loading the ModusToolbox Technology Packs and Early Access Packs
 Finished loading the ModusToolbox Technology Packs and Early Access Packs (8 ms)
 Loading the tools information
-Finished loading the tools information (132 ms)
+Finished loading the tools information (130 ms)
 From ModusToolbox Tools version 3.5.0.0 installed at C:/Users/SwaminathanK/ModusToolbox/tools_3.5, using
  airoc-tools version 5.0.1.207
  bsp-assistant version 1.40.0.2609
@@ -135,7 +135,7 @@ Finished download of file 'https://github.com/golioth/mtb-golioth-mw-manifest/ra
 Finished download of file 'https://github.com/memfault/mtb-memfault-mw-manifest/raw/main/mtb-memfault-mw-manifest-fv2.xml'
 Finished download of file 'https://github.com/rtlabs-com/mtb-rtlabs-manifest/raw/main/rtlabs-mtb-mw-manifest-fw2-rtlabs.xml'
 Finished download of file 'https://github.com/sensiml/sensiml-mw-manifest/raw/main/sensiml-mw-manifest-fv2.xml'
-Finished loading the manifest data (4534 ms)
+Finished loading the manifest data (4732 ms)
 0 error(s), 0 warning(s)
 
 Summary: 
@@ -149,10 +149,10 @@ Press "Create" to create the selected application(s).
 Collecting application data...
 
 Info: The following entered on the command line will create the exact same project as that created with the GUI tool:
-C:/Users/SwaminathanK/ModusToolbox/tools_3.5/project-creator/project-creator-cli.exe --board-id CY8CKIT-062-WIFI-BT --board-uri https://github.com/cypresssemiconductorco/TARGET_CY8CKIT-062-WIFI-BT --board-commit latest-v5.X --app-id mtb-example-hal-hello-world --app-uri https://github.com/Infineon/mtb-example-hal-hello-world --app-commit latest-v4.X --target-dir C:/Users/SwaminathanK/Modustoolbox-workspace --user-app-name DSP_Mag_benchmark --use-modus-shell
-Starting application creation for 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark'.
+C:/Users/SwaminathanK/ModusToolbox/tools_3.5/project-creator/project-creator-cli.exe --board-id CY8CKIT-062-WIFI-BT --board-uri https://github.com/cypresssemiconductorco/TARGET_CY8CKIT-062-WIFI-BT --board-commit latest-v5.X --app-id mtb-example-hal-hello-world --app-uri https://github.com/Infineon/mtb-example-hal-hello-world --app-commit latest-v4.X --target-dir C:/Users/SwaminathanK/Modustoolbox-workspace --user-app-name DSP_FIR_benchmark --use-modus-shell
+Starting application creation for 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark'.
 Acquiring the application source 'https://github.com/Infineon/mtb-example-hal-hello-world'.
-Git#0>Cloning into 'DSP_Mag_benchmark'...
+Git#0>Cloning into 'DSP_FIR_benchmark'...
 Git#0>remote: Enumerating objects: 48, done.        
 Git#0>remote: Counting objects:  12% (1/8)        
 Git#0>remote: Counting objects:  25% (2/8)        
@@ -218,7 +218,7 @@ Git#0>Receiving objects:  93% (45/48)
 Git#0>Receiving objects:  95% (46/48)
 Git#0>Receiving objects:  97% (47/48)
 Git#0>Receiving objects: 100% (48/48)
-Git#0>Receiving objects: 100% (48/48), 6.95 KiB | 889.00 KiB/s, done.
+Git#0>Receiving objects: 100% (48/48), 6.95 KiB | 790.00 KiB/s, done.
 Git#0>Resolving deltas:   0% (0/13)
 Git#0>Resolving deltas:   7% (1/13)
 Git#0>Resolving deltas:  15% (2/13)
@@ -246,21 +246,21 @@ Git#1>HEAD is now at 313d87e Upload mtb-example-hal-hello-world [2644]
 Acquired application source successfully.
 Loading the application.
 Loaded the application successfully.
-Processing project 'DSP_Mag_benchmark'.
+Processing project 'DSP_FIR_benchmark'.
 Starting to commit changes to the filesystem and project 'mtb-example-hal-hello-world'.
-Writing mtb file for asset 'CY8CKIT-062-WIFI-BT' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/deps'.
-Writing mtb file for asset 'cat1cm0p' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'core-lib' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'core-make' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'mtb-hal-cat1' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'mtb-pdl-cat1' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'recipe-make-cat1a' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'udb-sdio-whd' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'bt-fw-mur-cyw4343w' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'cmsis' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'device-db' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs'.
-Writing mtb file for asset 'retarget-io' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/deps'.
-Git#2>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs clone --progress --origin cypress --no-checkout --filter=blob:none https://github.com/cypresssemiconductorco/TARGET_CY8CKIT-062-WIFI-BT TARGET_CY8CKIT-062-WIFI-BT
+Writing mtb file for asset 'CY8CKIT-062-WIFI-BT' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/deps'.
+Writing mtb file for asset 'cat1cm0p' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'core-lib' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'core-make' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'mtb-hal-cat1' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'mtb-pdl-cat1' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'recipe-make-cat1a' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'udb-sdio-whd' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'bt-fw-mur-cyw4343w' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'cmsis' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'device-db' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs'.
+Writing mtb file for asset 'retarget-io' to the folder 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/deps'.
+Git#2>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs clone --progress --origin cypress --no-checkout --filter=blob:none https://github.com/cypresssemiconductorco/TARGET_CY8CKIT-062-WIFI-BT TARGET_CY8CKIT-062-WIFI-BT
 Git#3>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/retarget-io/release-v1.7.0 -c advice.detachedHead=false checkout --progress release-v1.7.0
 Git#4>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/cat1cm0p/release-v1.8.0 -c advice.detachedHead=false checkout --progress release-v1.8.0
 Git#5>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/core-lib/release-v1.4.4 -c advice.detachedHead=false checkout --progress release-v1.4.4
@@ -268,15 +268,12 @@ Git#2>Cloning into 'TARGET_CY8CKIT-062-WIFI-BT'...
 Git#3>HEAD is now at 9dd4eeb Upload retarget-io [3062]
 Git#3>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/retarget-io/release-v1.7.0 -c advice.detachedHead=false checkout --progress release-v1.7.0
 Git#6>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/core-make/release-v3.6.1 -c advice.detachedHead=false checkout --progress release-v3.6.1
-Git#4>HEAD is now at bc2632e Upload cat1cm0p 1.8.0.508 [3108]
-Git#4>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/cat1cm0p/release-v1.8.0 -c advice.detachedHead=false checkout --progress release-v1.8.0
-Git#7>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/mtb-hal-cat1/release-v2.7.3 -c advice.detachedHead=false checkout --progress release-v2.7.3
 Git#5>HEAD is now at 933c475 Upload core-lib [3609]
 Git#5>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/core-lib/release-v1.4.4 -c advice.detachedHead=false checkout --progress release-v1.4.4
+Git#7>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/mtb-hal-cat1/release-v2.7.3 -c advice.detachedHead=false checkout --progress release-v2.7.3
+Git#4>HEAD is now at bc2632e Upload cat1cm0p 1.8.0.508 [3108]
+Git#4>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/cat1cm0p/release-v1.8.0 -c advice.detachedHead=false checkout --progress release-v1.8.0
 Git#8>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/mtb-pdl-cat1/release-v3.16.0 -c advice.detachedHead=false checkout --progress release-v3.16.0
-Git#6>HEAD is now at ec21aff Upload core-make 3.6.1.6907 [3497]
-Git#6>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/core-make/release-v3.6.1 -c advice.detachedHead=false checkout --progress release-v3.6.1
-Git#9>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/recipe-make-cat1a/release-v2.5.0 -c advice.detachedHead=false checkout --progress release-v2.5.0
 Git#2>remote: Enumerating objects: 197, done.        
 Git#2>remote: Counting objects:   1% (1/68)        
 Git#2>remote: Counting objects:   2% (2/68)        
@@ -403,10 +400,14 @@ Git#2>remote: Compressing objects:  98% (53/54)
 Git#2>remote: Compressing objects: 100% (54/54)        
 Git#2>remote: Compressing objects: 100% (54/54), done.        
 Git#2>remote: Total 197 (delta 20), reused 60 (delta 14), pack-reused 129 (from 1)        
+Git#6>HEAD is now at ec21aff Upload core-make 3.6.1.6907 [3497]
+Git#6>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/core-make/release-v3.6.1 -c advice.detachedHead=false checkout --progress release-v3.6.1
+Git#9>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/recipe-make-cat1a/release-v2.5.0 -c advice.detachedHead=false checkout --progress release-v2.5.0
 Git#2>Receiving objects:   0% (1/197)
 Git#2>Receiving objects:   1% (2/197)
 Git#2>Receiving objects:   2% (4/197)
-Git#2>Receiving objects:   3% (6/197)
+Receiving objects
+Git#2>:   3% (6/197)
 Git#2>Receiving objects:   4% (8/197)
 Git#2>Receiving objects:   5% (10/197)
 Git#2>Receiving objects:   6% (12/197)
@@ -415,7 +416,8 @@ Git#2>Receiving objects:   8% (16/197)
 Git#2>Receiving objects:   9% (18/197)
 Git#2>Receiving objects:  10% (20/197)
 Git#2>Receiving objects:  11% (22/197)
-Git#2>Receiving objects:  12% (24/197)
+Receiving objects
+Git#2>:  12% (24/197)
 Git#2>Receiving objects:  13% (26/197)
 Git#2>Receiving objects:  14% (28/197)
 Git#2>Receiving objects:  15% (30/197)
@@ -440,8 +442,7 @@ Git#2>Receiving objects:  33% (66/197)
 Git#2>Receiving objects:  34% (67/197)
 Git#2>Receiving objects:  35% (69/197)
 Git#2>Receiving objects:  36% (71/197)
-Receiving objects: 
-Git#2> 37% (73/197)
+Git#2>Receiving objects:  37% (73/197)
 Git#2>Receiving objects:  38% (75/197)
 Git#2>Receiving objects:  39% (77/197)
 Git#2>Receiving objects:  40% (79/197)
@@ -486,8 +487,7 @@ Git#2>Receiving objects:  78% (154/197)
 Git#2>Receiving objects:  79% (156/197)
 Git#2>Receiving objects:  80% (158/197)
 Git#2>Receiving objects:  81% (160/197)
-Receiving objects:  82% (162/197)
-Git#2>
+Git#2>Receiving objects:  82% (162/197)
 Git#2>Receiving objects:  83% (164/197)
 Git#2>Receiving objects:  84% (166/197)
 Git#2>Receiving objects:  85% (168/197)
@@ -502,13 +502,13 @@ Git#2>Receiving objects:  93% (184/197)
 Git#2>Receiving objects:  94% (186/197)
 Git#2>Receiving objects:  95% (188/197)
 Git#2>Receiving objects:  96% (190/197)
-Git#2>Receiving objects:  97% (192/197)
+Receiving objects:  97% (192/197)
+Git#2>
 Git#2>Receiving objects:  98% (194/197)
 Git#2>Receiving objects:  99% (196/197)
 Git#2>Receiving objects: 100% (197/197)
-Git#2>Receiving objects: 100% (197/197), 41.44 KiB | 345.00 KiB/s, done.
-Resolving deltas
-Git#2>:   0% (0/50)
+Git#2>Receiving objects: 100% (197/197), 41.44 KiB | 382.00 KiB/s, done.
+Git#2>Resolving deltas:   0% (0/50)
 Git#2>Resolving deltas:   2% (1/50)
 Git#2>Resolving deltas:   4% (2/50)
 Git#2>Resolving deltas:   6% (3/50)
@@ -520,8 +520,7 @@ Git#2>Resolving deltas:  16% (8/50)
 Git#2>Resolving deltas:  18% (9/50)
 Git#2>Resolving deltas:  20% (10/50)
 Git#2>Resolving deltas:  22% (11/50)
-Resolving deltas
-Git#2>:  24% (12/50)
+Git#2>Resolving deltas:  24% (12/50)
 Git#2>Resolving deltas:  26% (13/50)
 Git#2>Resolving deltas:  28% (14/50)
 Git#2>Resolving deltas:  30% (15/50)
@@ -544,6 +543,7 @@ Git#2>Resolving deltas:  62% (31/50)
 Git#2>Resolving deltas:  64% (32/50)
 Git#2>Resolving deltas:  66% (33/50)
 Git#2>Resolving deltas:  68% (34/50)
+Git#2>Resolving deltas:  70% (35/50)
 Git#2>Resolving deltas:  72% (36/50)
 Git#2>Resolving deltas:  74% (37/50)
 Git#2>Resolving deltas:  76% (38/50)
@@ -555,12 +555,13 @@ Git#2>Resolving deltas:  86% (43/50)
 Git#2>Resolving deltas:  88% (44/50)
 Git#2>Resolving deltas:  90% (45/50)
 Git#2>Resolving deltas:  92% (46/50)
-Git#2>Resolving deltas:  94% (47/50)
-Git#2>Resolving deltas:  96% (48/50)
+Resolving deltas: 
+Git#2> 94% (47/50)
 Git#2>Resolving deltas:  98% (49/50)
 Git#2>Resolving deltas: 100% (50/50)
-Git#2>Resolving deltas: 100% (50/50), done.
-Git#2>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs clone --progress --origin cypress --no-checkout --filter=blob:none https://github.com/cypresssemiconductorco/TARGET_CY8CKIT-062-WIFI-BT TARGET_CY8CKIT-062-WIFI-BT
+Resolving deltas: 100% (50/50)
+Git#2>, done.
+Git#2>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs clone --progress --origin cypress --no-checkout --filter=blob:none https://github.com/cypresssemiconductorco/TARGET_CY8CKIT-062-WIFI-BT TARGET_CY8CKIT-062-WIFI-BT
 Git#10>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/udb-sdio-whd/release-v1.2.1 -c advice.detachedHead=false checkout --progress release-v1.2.1
 Git#8>HEAD is now at cd9299b Upload mtb-pdl-cat1 3.16.0.40964 [3403]
 Git#8>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/mtb-pdl-cat1/release-v3.16.0 -c advice.detachedHead=false checkout --progress release-v3.16.0
@@ -573,13 +574,12 @@ Git#9>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/re
 Git#13>Starting: git -C C:/Users/SwaminathanK/.modustoolbox/global/device-db/release-v4.26.0 -c advice.detachedHead=false checkout --progress release-v4.26.0
 Git#10>HEAD is now at 9ecf7fb Upload udb-sdio-whd [990]
 Git#10>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/udb-sdio-whd/release-v1.2.1 -c advice.detachedHead=false checkout --progress release-v1.2.1
-Git#14>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs/TARGET_CY8CKIT-062-WIFI-BT -c advice.detachedHead=false checkout --progress release-v5.0.1
+Git#14>Starting: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs/TARGET_CY8CKIT-062-WIFI-BT -c advice.detachedHead=false checkout --progress release-v5.0.1
 Git#11>HEAD is now at 7872a48 Upload bt-fw-mur-cyw4343w 1.0.0.2595 [3108]
 Git#11>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/bt-fw-mur-cyw4343w/release-v1.0.0 -c advice.detachedHead=false checkout --progress release-v1.0.0
-Git#12>HEAD is now at 89700d7 Upload cmsis 5.8.2.133 [3108]
+HEAD is now at 89700d7
+Git#12> Upload cmsis 5.8.2.133 [3108]
 Git#12>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/mtb_shared/cmsis/release-v5.8.2 -c advice.detachedHead=false checkout --progress release-v5.8.2
-Git#13>HEAD is now at c2c1fc50 Upload device-db 4.26.0.8600 [3605]
-Git#13>Success: git -C C:/Users/SwaminathanK/.modustoolbox/global/device-db/release-v4.26.0 -c advice.detachedHead=false checkout --progress release-v4.26.0
 Git#14>Updating files:   1% (2/154)
 Git#14>Updating files:   2% (4/154)
 Git#14>Updating files:   3% (5/154)
@@ -596,8 +596,10 @@ Git#14>Updating files:  13% (21/154)
 Git#14>Updating files:  14% (22/154)
 Git#14>Updating files:  15% (24/154)
 Git#14>Updating files:  16% (25/154)
+Git#13>HEAD is now at c2c1fc50 Upload device-db 4.26.0.8600 [3605]
 Git#14>Updating files:  17% (27/154)
 Git#14>Updating files:  18% (28/154)
+Git#13>Success: git -C C:/Users/SwaminathanK/.modustoolbox/global/device-db/release-v4.26.0 -c advice.detachedHead=false checkout --progress release-v4.26.0
 Git#14>Updating files:  19% (30/154)
 Git#14>Updating files:  20% (31/154)
 Git#14>Updating files:  21% (33/154)
@@ -682,17 +684,17 @@ Git#14>Updating files:  99% (153/154)
 Git#14>Updating files: 100% (154/154)
 Git#14>Updating files: 100% (154/154), done.
 Git#14>HEAD is now at 34ae298 Upload TARGET_CY8CKIT-062-WIFI-BT [3403]
-Git#14>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs/TARGET_CY8CKIT-062-WIFI-BT -c advice.detachedHead=false checkout --progress release-v5.0.1
+Git#14>Success: git -C C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs/TARGET_CY8CKIT-062-WIFI-BT -c advice.detachedHead=false checkout --progress release-v5.0.1
 Requested to change the active target to 'APP_CY8CKIT-062-WIFI-BT'.
-Removed the file 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/deps/TARGET_CY8CKIT-062-WIFI-BT.mtb'.
-Writing the file 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/libs/app.mk'.
+Removed the file 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/deps/TARGET_CY8CKIT-062-WIFI-BT.mtb'.
+Writing the file 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/libs/app.mk'.
 Successfully committed changes to the project 'mtb-example-hal-hello-world'.
-Project "DSP_Mag_benchmark" created successfully.
-Successfully created "DSP_Mag_benchmark" application.
+Project "DSP_FIR_benchmark" created successfully.
+Successfully created "DSP_FIR_benchmark" application.
 ==============================================================================
-= Export "DSP_Mag_benchmark" application to Eclipse IDE for ModusToolbox™ =
+= Export "DSP_FIR_benchmark" application to Eclipse IDE for ModusToolbox™ =
 ==============================================================================
-make eclipse CY_IDE_PRJNAME=DSP_Mag_benchmark CY_MAKE_IDE=eclipse CY_MAKE_IDE_VERSION=3.4 CY_TOOLS_PATHS=C:/Users/SwaminathanK/ModusToolbox/tools_3.5 MTB_MAKE_ECLIPSE_FORCE_REGENERATE_PROJECT=1
+make eclipse CY_IDE_PRJNAME=DSP_FIR_benchmark CY_MAKE_IDE=eclipse CY_MAKE_IDE_VERSION=3.4 CY_TOOLS_PATHS=C:/Users/SwaminathanK/ModusToolbox/tools_3.5 MTB_MAKE_ECLIPSE_FORCE_REGENERATE_PROJECT=1
 Tools Directory: C:/Users/SwaminathanK/ModusToolbox/tools_3.5
 Searching installed tools in progress...
 Searching installed tools complete
@@ -702,7 +704,7 @@ Generating mtbninja data complete...
 Prebuild operations complete
 Toolchain validation: PASS
 Initializing build: mtb-example-hal-hello-world Debug APP_CY8CKIT-062-WIFI-BT GCC_ARM
-# 0: Loading the application in directory 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark'
+# 0: Loading the application in directory 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark'
 # 0: Loading the ModusToolbox Technology Packs and Early Access Packs
 # 0: Loading the tools information
 # 0: Starting code generator 'capsense-configurator-cli '
@@ -714,15 +716,15 @@ Generating mtbninja data complete...
 Toolchain validation: PASS
 Initializing build: mtb-example-hal-hello-world Debug APP_CY8CKIT-062-WIFI-BT GCC_ARM
 Prebuild operations complete
-# 0: Loading the application in directory 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark'
+# 0: Loading the application in directory 'C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark'
 # 0: Loading the ModusToolbox Technology Packs and Early Access Packs
 # 0: Loading the tools information
-Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/.cproject
-Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/.project
-Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/.mtbLaunchConfigs/DSP_Mag_benchmark Program.launch
-Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/.mtbLaunchConfigs/DSP_Mag_benchmark Erase Device.launch
-Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/.mtbLaunchConfigs/DSP_Mag_benchmark Attach (KitProg3_MiniProg4).launch
-Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/.mtbLaunchConfigs/DSP_Mag_benchmark Debug (KitProg3_MiniProg4).launch
+Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/.cproject
+Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/.project
+Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/.mtbLaunchConfigs/DSP_FIR_benchmark Program.launch
+Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/.mtbLaunchConfigs/DSP_FIR_benchmark Erase Device.launch
+Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/.mtbLaunchConfigs/DSP_FIR_benchmark Attach (KitProg3_MiniProg4).launch
+Generated C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FIR_benchmark/.mtbLaunchConfigs/DSP_FIR_benchmark Debug (KitProg3_MiniProg4).launch
 
 Instructions:
 1. Open Eclipse IDE for ModusToolbox
@@ -731,9 +733,9 @@ Instructions:
 
 For more information, refer to the Eclipse IDE for ModusToolbox user guide.
 
-The application "DSP_Mag_benchmark" was successfully exported to Eclipse IDE for ModusToolbox™.
+The application "DSP_FIR_benchmark" was successfully exported to Eclipse IDE for ModusToolbox™.
 0 error(s), 0 warning(s)
 
 Summary:
 
-Successfully created and exported "DSP_Mag_benchmark" application.
+Successfully created and exported "DSP_FIR_benchmark" application.

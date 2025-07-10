@@ -59,3 +59,19 @@ RAM_FUNC void calculate_averages(uint32_t* cycle_counts, uint32_t* instr_counts,
     printf("Execution Time = %.2f us\n\r", total_exec_time_us / num_executions);
     printf("Stack Used = %lu bytes\n\r", total_stack_used / num_executions);
 }
+
+RAM_FUNC void generate_sine_wave_f32(float32_t* input, int N, float signal_freq, float sampling_freq) {
+    for (int i = 0; i < N; i++) {
+        float value = sinf(2 * M_PI * signal_freq * i / sampling_freq);
+        input[2 * i] = value;  // Real part
+        input[2 * i + 1] = 0;  // Imaginary part
+    }
+}
+
+RAM_FUNC void generate_sine_wave_q15(q15_t* input, int N, float signal_freq, float sampling_freq) {
+    for (int i = 0; i < N; i++) {
+        float value = sinf(2 * M_PI * signal_freq * i / sampling_freq);
+        input[2 * i] = (q15_t)(value * Q15_SCALE);  // Real part
+        input[2 * i + 1] = 0;                       // Imaginary part
+    }
+}
