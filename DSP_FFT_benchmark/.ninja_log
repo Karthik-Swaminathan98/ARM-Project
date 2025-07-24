@@ -816,3 +816,5 @@
 1159	6585	7737562132640390	C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FFT_benchmark/build/Custom/local/test_icfft_f32.o	afdc086f1d31e86
 566	4142	7737563201298220	C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FFT_benchmark/build/Custom/local/test_icfft_q15.o	9e4d2034985921e4
 4145	6733	7737563237099542	build/APP_CY8CKIT-062-WIFI-BT/Custom/mtb-example-hal-hello-world.elf	54acee2b1d9c9ccc
+122	1934	7743559147330466	C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_FFT_benchmark/build/Custom/local/main.o	172c86052749f883
+1935	3071	7743559165386816	build/APP_CY8CKIT-062-WIFI-BT/Custom/mtb-example-hal-hello-world.elf	54acee2b1d9c9ccc

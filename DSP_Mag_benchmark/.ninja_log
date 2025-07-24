@@ -268,3 +268,5 @@
 391	2564	7735958837602311	C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/build/Custom/local/test_cmag_q15.o	8825e4de29eb10c3
 460	3166	7735958838297065	C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/build/Custom/libraries_shared/udb-sdio-whd/SDIO_HOST.o	cda6a903bfdf2de
 3166	4065	7735958865352578	build/APP_CY8CKIT-062-WIFI-BT/Custom/mtb-example-hal-hello-world.elf	e284d0b0c473f1e5
+352	1143	7741849717342146	C:/Users/SwaminathanK/Modustoolbox-workspace/DSP_Mag_benchmark/build/Custom/local/main.o	94bdcff3b7f795f3
+1144	1984	7741849725271365	build/APP_CY8CKIT-062-WIFI-BT/Custom/mtb-example-hal-hello-world.elf	e284d0b0c473f1e5

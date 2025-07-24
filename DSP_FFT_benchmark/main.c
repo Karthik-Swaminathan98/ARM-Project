@@ -30,7 +30,7 @@ RAM_FUNC int main(void)
 
     // Print system details
     printf("\n\r");
-    printf("-----Starting CMSIS FFT Benchmark-----\n\r");
+    printf("------Starting CMSIS FFT Benchmark------\n\r");
     printf("\n\r");
     printf("CPU Clock Frequency: %lu Hz\n\r", clkFastfreq);
     printf("\n\r");
