@@ -74,11 +74,11 @@ Instruction count is estimated using the DWT auxiliary registers:
 
 ```c
 /* Reset all DWT counters */
-DWT->CPICNT  = 0;
-DWT->EXCCNT  = 0;
+DWT->CPICNT   = 0;
+DWT->EXCCNT   = 0;
 DWT->SLEEPCNT = 0;
-DWT->LSUCNT  = 0;
-DWT->FOLDCNT = 0;
+DWT->LSUCNT   = 0;
+DWT->FOLDCNT  = 0;
 
 /* Estimation formula (ARM-recommended) */
 uint32_t instr_count = cycle_count
@@ -192,7 +192,7 @@ RAM execution enabled via linker + section attribute:
 RAM_FUNC int main(void) { ... }
 ```
 
-### Library
+### Libraries
 
 | Library | Source |
 |---|---|
@@ -253,7 +253,7 @@ Full results across all 5 metrics: [arm-riscv-benchmark-results](https://github.
 |---|---|
 | [RISCV-Project](https://github.com/Karthik-Swaminathan98/RISCV-Project) | RISC-V counterpart — NMSIS-DSP/NN benchmarks on Telink B91 |
 | [arm-riscv-benchmark-results](https://github.com/Karthik-Swaminathan98/arm-riscv-benchmark-results) | Full cross-architecture results — DSP, NN, and model inference |
-| [embedded-benchmark-analysis](https://github.com/Karthik-Swaminathan98/embedded-benchmark-analysis) | Python scripts — objdump call-graph parser, .map analyser, charts |
+| [mcu-function-size-analyser](https://github.com/Karthik-Swaminathan98/mcu-function-size-analyser) | Python tool — dependency-aware function code size analyser |
 
 ---
 
